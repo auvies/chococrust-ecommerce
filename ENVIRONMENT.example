@@ -1,0 +1,157 @@
+# Choco Crust — Environment Variable Reference (names only, no values)
+#
+# This is a consolidated, deployment-focused index of every environment
+# variable the application reads, organized by which service actually
+# needs it (Railway backend / Vercel frontend / Neon database) rather than
+# by dev-vs-staging-vs-production. It exists to make a production
+# deployment checklist easy to work through end to end.
+#
+# This file is NOT loaded by either app and contains NO real values -
+# see DEPLOYMENT.md for exactly how to set each of these on Railway/Vercel.
+# The authoritative, framework-loaded templates remain:
+#   backend/.env.example              (local development)
+#   backend/.env.staging.example      (staging deltas from the above)
+#   backend/.env.production.example   (production deltas from the above)
+#   frontend/.env.example             (local development)
+#
+# NEVER put a real secret value in this file, in any .env.example-style
+# file, or in any committed documentation. Real values live only in
+# Railway's and Vercel's own environment-variable dashboards, per
+# CLAUDE.md §6.
+
+# =============================================================================
+# BACKEND (Railway) — Laravel API
+# =============================================================================
+
+## --- Core application ---
+APP_NAME
+APP_ENV
+APP_DEBUG
+APP_URL
+APP_KEY
+APP_LOCALE
+APP_FALLBACK_LOCALE
+APP_FAKER_LOCALE
+APP_MAINTENANCE_DRIVER
+
+## --- CORS (must exactly match the deployed frontend origin(s)) ---
+CORS_ALLOWED_ORIGINS
+
+## --- JWT / auth cookies (CLAUDE.md §6/§7 — distinct from APP_KEY) ---
+JWT_SECRET
+AUTH_ACCESS_TOKEN_TTL
+AUTH_REFRESH_TOKEN_TTL
+AUTH_ACCESS_COOKIE
+AUTH_REFRESH_COOKIE
+AUTH_CSRF_COOKIE
+AUTH_COOKIE_DOMAIN
+AUTH_COOKIE_SECURE
+AUTH_COOKIE_SAMESITE
+AUTH_LOGIN_MAX_ATTEMPTS
+AUTH_LOGIN_DECAY_SECONDS
+
+## --- Database (Neon PostgreSQL) ---
+DB_CONNECTION
+DB_HOST
+DB_PORT
+DB_DATABASE
+DB_USERNAME
+DB_PASSWORD
+DB_SSLMODE
+
+## --- Logging ---
+LOG_CHANNEL
+LOG_LEVEL
+LOG_STACK
+LOG_DEPRECATIONS_CHANNEL
+
+## --- Session (framework-level; auth itself is JWT-cookie based, not session-based) ---
+SESSION_DRIVER
+SESSION_LIFETIME
+SESSION_ENCRYPT
+SESSION_DOMAIN
+SESSION_PATH
+
+## --- Cache / Queue (both work against the same Postgres database — no separate service required at current scale) ---
+CACHE_STORE
+QUEUE_CONNECTION
+
+## --- Object storage for uploads (CLAUDE.md §12 — required in production; do not leave as "local") ---
+FILESYSTEM_DISK
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_DEFAULT_REGION
+AWS_BUCKET
+AWS_USE_PATH_STYLE_ENDPOINT
+AWS_ENDPOINT
+AWS_URL
+
+## --- Password hashing ---
+BCRYPT_ROUNDS
+
+## --- Mail (order/payment/delivery notification emails) ---
+MAIL_MAILER
+MAIL_SCHEME
+MAIL_HOST
+MAIL_PORT
+MAIL_USERNAME
+MAIL_PASSWORD
+MAIL_FROM_ADDRESS
+MAIL_FROM_NAME
+
+## --- AI chatbot (Anthropic) — leave ANTHROPIC_API_KEY blank until a real account exists; the app degrades gracefully with no key ---
+ANTHROPIC_API_KEY
+ANTHROPIC_BASE_URL
+ANTHROPIC_MODEL
+ANTHROPIC_MAX_TOKENS
+ANTHROPIC_MAX_HISTORY_MESSAGES
+ANTHROPIC_MAX_CALLS_PER_HOUR
+ANTHROPIC_MAX_AGENT_TOOL_CALLS_PER_HOUR
+ANTHROPIC_DAILY_COST_LIMIT_USD
+ANTHROPIC_DAILY_REQUEST_LIMIT
+ANTHROPIC_TIMEOUT_SECONDS
+
+## --- WhatsApp Business API (prepared, not built — no account exists; leave WHATSAPP_ENABLED=false) ---
+WHATSAPP_ENABLED
+WHATSAPP_API_KEY
+WHATSAPP_FROM_NUMBER
+
+## --- Facebook / Instagram (prepared, not built — no account exists; leave both *_ENABLED=false) ---
+FACEBOOK_ENABLED
+FACEBOOK_APP_ID
+FACEBOOK_APP_SECRET
+FACEBOOK_PAGE_ID
+FACEBOOK_PAGE_ACCESS_TOKEN
+INSTAGRAM_ENABLED
+INSTAGRAM_BUSINESS_ACCOUNT_ID
+INSTAGRAM_ACCESS_TOKEN
+
+## --- Optional (only if used) ---
+BROADCAST_CONNECTION
+REDIS_CLIENT
+REDIS_HOST
+REDIS_PORT
+REDIS_PASSWORD
+MEMCACHED_HOST
+
+# =============================================================================
+# FRONTEND (Vercel) — Next.js app
+# =============================================================================
+#
+# Every variable here is prefixed NEXT_PUBLIC_ and is therefore shipped to
+# the browser and public by definition (CLAUDE.md §6) — none of these are
+# secrets, and none should ever be treated as one.
+
+NEXT_PUBLIC_API_BASE_URL
+NEXT_PUBLIC_APP_ENV
+NEXT_PUBLIC_SITE_URL
+
+# =============================================================================
+# DATABASE (Neon) — provisioned separately, referenced by the backend's DB_* vars above
+# =============================================================================
+#
+# Neon does not require its own env vars beyond what the backend already
+# reads (DB_HOST/DB_PORT/DB_DATABASE/DB_USERNAME/DB_PASSWORD/DB_SSLMODE) —
+# copy the connection details Neon's dashboard gives you into those Railway
+# variables. Listed here only so this file is a complete deployment
+# checklist covering all three provisioned services end to end.

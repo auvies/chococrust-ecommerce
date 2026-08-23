@@ -1,0 +1,10 @@
+# Local dev tooling (standalone PHP runtime fetched for this machine only —
+# Railway uses its own PHP buildpack in deployment, this is never shipped).
+/.tooling/
+
+# OS/editor/AI-tool cruft not already covered by frontend/backend .gitignore files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.claude/
